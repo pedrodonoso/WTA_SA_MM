@@ -1,0 +1,3 @@
+- Manual simple
+- lineas de ejemplo
+- más detalle si es necesario

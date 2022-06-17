@@ -25,7 +25,8 @@ $(MAIN): $(MAIN).cpp
 
 # $(MAIN): $(MAIN).cpp
 # 	$(CC) $(CFLAGS) $(TFLAGS) $(MAIN).cpp sthread.c -o $(MAIN) 
-
+clean:
+	rm main
 help:
 	@echo 'sudo make TARGET=nombre_archivo'
 
