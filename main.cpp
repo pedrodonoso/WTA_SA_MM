@@ -229,7 +229,9 @@ void accept_solution(Problem *problem, Solution *new_solution)
 
     // print_x_vector((*(*problem).solution).x);
     // print_x_vector((*new_solution).x);
-    (*problem).solution = new_solution;
+    cout << "_ACCEPT_SOLUTION_" << endl;
+    print_x_vector((*new_solution).x);
+    *((*problem).solution) = *new_solution;
 
     // cout << "Se acepta!: " << *s_prev << ": :" << *new_solution << endl;
     cout << "Se acepta!" << endl;
@@ -247,7 +249,7 @@ double delta_evaluate(Problem problem, Solution new_solution)
     int q = (new_solution).q;
     int r = (new_solution).r;
     cout << "Q: " << q << " R: " << r << endl;
-    double delta = problem.v[q] * (problem.p[r][q] - problem.p[q][q]) + problem.v[r] * (problem.p[q][r] - problem.p[r][r]);
+    // double delta = problem.v[q] * ( problem.p[r][q] - problem.p[q][q]) + problem.v[r] * ( problem.p[q][r] - problem.p[r][r] );
 
     // valor de destrucción de q * (probabilidad de destrucción después del movimiento - probabilidad de destrucción antes del movimiento)
     // valor de destrucción de r * (probabilidad de destrucción después del movimiento - probabilidad de destrucción antes del movimiento)
@@ -257,13 +259,24 @@ double delta_evaluate(Problem problem, Solution new_solution)
     // probabilidad arma_r -> obj_r AHORA
     // probabilidad arma_q -> obj_r ANTES
 
+    Problem new_problem = problem;
+    new_problem.solution = &new_solution;
+    // double delta = f(new_problem) - f(problem);
+    // return f(new_problem) - f(problem); // min
+
+    cout << "F NEW: " << f(new_problem) << endl;
+    cout << "F CURRENT: " << f(problem) << endl;
+
+    double delta = f(new_problem) - f(problem);
+    return delta; // min   // es + cuando la nueva es mejor
+
+    // return f(s_prev) - f(s_current); // max
+
     // Problem new_problem = problem;
     // new_problem.solution = &new_solution;
-    // double delta = f(new_problem) - f(problem);
-    // // return f(new_problem) - f(problem); // min
-    // cout << "Delta: " << delta << endl;
-    return delta; // min
-    // return f(s_prev) - f(s_current); // max
+    // cout << "Delta 1: " << f(new_problem) << endl;
+    // cout << "Delta 2: " << f(problem) << endl;
+    // return delta; // min
 }
 
 // k : parámetro de recocido.
@@ -272,12 +285,18 @@ void change_temperature(double *T, double k)
     *T = *T * k;
 }
 
+void copy_solution(Solution *new_solution, Solution *best_solution)
+{
+
+    best_solution = new_solution;
+}
+
 int main(int argc, char *argv[])
 {
     /*  INITIAL PARAMETERS */
-    double T_initial = 1000;
-    double k = 0.8; // usualmente entre 0.8 y 0.9999
-    int max_iterations = 2;
+    double T_initial = 10000;
+    double k = 0.9; // usualmente entre 0.8 y 0.9999
+    int max_iterations = 1000;
     double T_min = 1e-10;
     double T_current = T_initial;
 
@@ -327,16 +346,16 @@ int main(int argc, char *argv[])
     // - Temperatura tiende a cero o una temperatura minima
     // - Tiempo máximo
 
+    Solution best_solution = Solution(int_dimension);
     for (int i = 0; (i < max_iterations) && (T_current > T_min); i++)
     {
         cout << "Iteracion: " << i << " , T: " << T_current << endl;
 
-        Solution best_solution = Solution(int_dimension);
         int pivot = random(0, int_dimension - 1);
         double best_delta = -INFINITY; // inifity o delta de la solucion actual?
         /* Generar vecindario */
         for (int j = 0; j < 4; j++)
-        { 
+        {
             if (j == pivot)
                 continue;
             /* Seteo de delta y nueva solución */
@@ -372,21 +391,24 @@ int main(int argc, char *argv[])
             cout << "FUNCION OBJETIVO : " << f_current << endl;
 
             /* Guardar el mejor delta */
-            if (best_delta <= delta)
+            if (best_delta <= delta && delta < 0)
             {
                 cout << " BEST DELTA : " << best_delta << " ; DELTA : " << delta << endl;
+
                 best_delta = delta;
                 best_solution = new_solution;
 
                 cout << "_BEST_" << endl;
-                print_x_vector(best_solution.x);
+                print_x_vector((best_solution).x);
                 cout << "_NEW_" << endl;
                 print_x_vector(new_solution.x);
             }
+            cout << "_BEST_OUT_IF_" << endl;
+            print_x_vector((best_solution).x);
         }
 
         cout << "Tomar decision ..." << endl;
-        print_x_vector(best_solution.x);
+        print_x_vector((best_solution).x);
 
         if (acceptance_function(best_delta, T_current))
             accept_solution(&problem, &best_solution);
@@ -394,7 +416,8 @@ int main(int argc, char *argv[])
             reject_solution();
 
         // print_x_vector((*problem.solution).x);
-        cout << "FUNCION OBJETIVO : " << f(problem) << endl;
+        cout << "FUNCION OBJETIVO BEST: " << f(problem) << endl;
+
         change_temperature(&T_current, k);
     }
 
