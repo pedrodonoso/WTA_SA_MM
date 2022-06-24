@@ -46,10 +46,23 @@ struct Problem
 std::random_device rd;
 std::mt19937 gen(rd());
 
-int random(int low, int high)
+constexpr int FLOAT_MIN = 0;
+constexpr int FLOAT_MAX = 1;
+
+double random(int low, int high)
 {
-    std::uniform_int_distribution<> dist(low, high);
-    return dist(gen);
+    // std::uniform_int_distribution<> dist(low, high);
+    // std::random_device rd;
+    std::default_random_engine eng(rd());
+    std::uniform_real_distribution<float> distr(low, high);
+    return distr(eng);
+    // std::srand(std::time(nullptr));
+
+    // double rdm = (rand() / ((float)(RAND_MAX / (high - low))));
+    // cout << rdm << endl;
+    // return rdm;
+
+    // return low + (float)(rand()) / ((float)(high/(high - low)));
 }
 
 /* Genera una solucion inicial */
@@ -145,8 +158,8 @@ Solution make_movement(Solution *s_current, int q, int r)
 
     Solution s_next = *s_current;
 
-    cout << "Arma q: " << q << endl;
-    cout << "Arma r: " << r << endl;
+    // cout << "Arma q: " << q << endl;
+    // cout << "Arma r: " << r << endl;
 
     int aux_q = (s_next.x)[q];
     int aux_r = (s_next.x)[r];
@@ -214,26 +227,20 @@ bool evaluation_function(double *s_prev, double *new_solution)
 // void evaluation_function(Solution s) {
 bool acceptance_function(double delta, double T_current)
 {
-    if (P(delta, T_current) > random(0, 1))
+    double rdm = random(0.0, 1.0);
+    // cout << "RANDOM: " << setprecision(6) << rdm << endl;
+    if (P(delta, T_current) > rdm)
         return true;
     return false;
 }
 
 void accept_solution(Problem *problem, Solution *new_solution)
 {
-    // *new_solution = *new_solution + 1;
-    // *s_prev = *new_solution;
-    // memcpy(s_prev, new_solution, 100 * sizeof(int));
-    // vector<int> s_x(new_solution.x.size());
-    // copy(new_solution.x.begin(), new_solution.x.end(), s_x.begin());
 
-    // print_x_vector((*(*problem).solution).x);
+    // cout << "_ACCEPT_SOLUTION_" << endl;
     // print_x_vector((*new_solution).x);
-    cout << "_ACCEPT_SOLUTION_" << endl;
-    print_x_vector((*new_solution).x);
-    *((*problem).solution) = *new_solution;
 
-    // cout << "Se acepta!: " << *s_prev << ": :" << *new_solution << endl;
+    *((*problem).solution) = *new_solution;
     cout << "Se acepta!" << endl;
     return;
 }
@@ -246,9 +253,9 @@ void reject_solution()
 
 double delta_evaluate(Problem problem, Solution new_solution)
 {
-    int q = (new_solution).q;
-    int r = (new_solution).r;
-    cout << "Q: " << q << " R: " << r << endl;
+    // int q = (new_solution).q;
+    // int r = (new_solution).r;
+    // cout << "Q: " << q << " R: " << r << endl;
     // double delta = problem.v[q] * ( problem.p[r][q] - problem.p[q][q]) + problem.v[r] * ( problem.p[q][r] - problem.p[r][r] );
 
     // valor de destrucción de q * (probabilidad de destrucción después del movimiento - probabilidad de destrucción antes del movimiento)
@@ -261,22 +268,12 @@ double delta_evaluate(Problem problem, Solution new_solution)
 
     Problem new_problem = problem;
     new_problem.solution = &new_solution;
-    // double delta = f(new_problem) - f(problem);
-    // return f(new_problem) - f(problem); // min
 
-    cout << "F NEW: " << f(new_problem) << endl;
-    cout << "F CURRENT: " << f(problem) << endl;
+    // cout << "F NEW: " << f(new_problem) << endl;
+    // cout << "F CURRENT: " << f(problem) << endl;
 
     double delta = f(new_problem) - f(problem);
     return delta; // min   // es + cuando la nueva es mejor
-
-    // return f(s_prev) - f(s_current); // max
-
-    // Problem new_problem = problem;
-    // new_problem.solution = &new_solution;
-    // cout << "Delta 1: " << f(new_problem) << endl;
-    // cout << "Delta 2: " << f(problem) << endl;
-    // return delta; // min
 }
 
 // k : parámetro de recocido.
@@ -294,10 +291,10 @@ void copy_solution(Solution *new_solution, Solution *best_solution)
 int main(int argc, char *argv[])
 {
     /*  INITIAL PARAMETERS */
-    double T_initial = 10000;
-    double k = 0.9; // usualmente entre 0.8 y 0.9999
-    int max_iterations = 1000;
-    double T_min = 1e-10;
+    double T_initial = 1000;
+    double k = 0.7; // usualmente entre 0.8 y 0.9999
+    int max_iterations = 100;
+    double T_min = 1e-50;
     double T_current = T_initial;
 
     cout << "Bienvenidx a la implementación de SA con MM para el problema WTA!" << endl;
@@ -363,7 +360,7 @@ int main(int argc, char *argv[])
             Solution new_solution = Solution(int_dimension);
 
             /* Generar vecino */
-            cout << "Generar vecino ..." << endl;
+            // cout << "Generar vecino ..." << endl;
             // int r = random(0, int_dimension - 1);
             // int q = random(0, int_dimension - 1);
 
@@ -372,54 +369,57 @@ int main(int argc, char *argv[])
 
             new_solution = make_movement(problem.solution, q, r);
 
-            cout << "_Nuevo vecino_" << endl;
-            print_x_vector(new_solution.x);
-
-            // cout << "_Solución actual_" << endl;
-            // print_x_vector((*problem.solution).x);
+            // cout << "_Nuevo vecino_" << endl;
+            // print_x_vector(new_solution.x);
 
             /* Evaluar delta */
-            cout << "Evaluar delta ... " << endl;
             delta = delta_evaluate(problem, new_solution);
+            // cout << "Delta: " << delta << endl;
 
-            cout << "Delta: " << delta << endl;
-
-            Problem pro = problem;
-            pro.solution = &new_solution;
-            double f_currents = f(pro);
-            cout << "FUNCION OBJETIVO VECINO: " << f_currents << endl;
-            cout << "FUNCION OBJETIVO : " << f_current << endl;
+            // ================ SOLO PARA IMPRIMIR FUNCION OBJETIVO
+            // Problem pro = problem;
+            // pro.solution = &new_solution;
+            // double f_currents = f(pro);
+            // cout << "FUNCION OBJETIVO VECINO: " << f_currents << endl;
+            // cout << "FUNCION OBJETIVO : " << f_current << endl;
+            // ================ SOLO PARA IMPRIMIR FUNCION OBJETIVO
 
             /* Guardar el mejor delta */
-            if (best_delta <= delta && delta < 0)
+            if (best_delta <= delta && delta < 0) // si es mejor que la solucion actua y mejor del vecindario
             {
-                cout << " BEST DELTA : " << best_delta << " ; DELTA : " << delta << endl;
+                // cout << " BEST DELTA : " << best_delta << " ; DELTA : " << delta << endl;
 
+                /* Guarda el mejor delta y la mejor solucion del vecindario*/
                 best_delta = delta;
                 best_solution = new_solution;
 
-                cout << "_BEST_" << endl;
-                print_x_vector((best_solution).x);
-                cout << "_NEW_" << endl;
-                print_x_vector(new_solution.x);
+                // cout << "_BEST_" << endl;
+                // print_x_vector((best_solution).x);
+                // cout << "_NEW_" << endl;
+                // print_x_vector(new_solution.x);
             }
-            cout << "_BEST_OUT_IF_" << endl;
-            print_x_vector((best_solution).x);
+            // cout << "_BEST_OUT_IF_" << endl;
+            // print_x_vector((best_solution).x);
         }
 
         cout << "Tomar decision ..." << endl;
-        print_x_vector((best_solution).x);
+        // print_x_vector((best_solution).x);
 
         if (acceptance_function(best_delta, T_current))
             accept_solution(&problem, &best_solution);
         else
             reject_solution();
 
+        cout << "_OPTIMO LOCAL_" << endl;
         // print_x_vector((*problem.solution).x);
         cout << "FUNCION OBJETIVO BEST: " << f(problem) << endl;
 
         change_temperature(&T_current, k);
     }
+
+    // cout << "_OPTIMO LOCAL_" << endl;
+    // print_x_vector((*problem.solution).x);
+    // cout << "FUNCION OBJETIVO BEST: " << f(problem) << endl;
 
     cout << "Hasta pronto!" << endl;
     return 0;
