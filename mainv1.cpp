@@ -140,13 +140,18 @@ void read_input(string file_name, Problem *problem, int int_dimension)
     (*problem).v = v_vector;
 }
 /* =============== */
-Solution make_movement(Solution *s_current, int q, int r)
+Solution make_movement(Solution *s_current)
 {
 
     Solution s_next = *s_current;
+    int dimension = s_next.x.size();
 
-    cout << "Arma q: " << q << endl;
-    cout << "Arma r: " << r << endl;
+    int q = random(0, dimension - 1);
+    int r = random(0, dimension - 1);
+    cout << "RANDOM q: " << q << endl;
+    cout << "RANDOM r: " << r << endl;
+
+    // vector<int> null_vector = vector<int>(dimension,0);
 
     int aux_q = (s_next.x)[q];
     int aux_r = (s_next.x)[r];
@@ -247,7 +252,7 @@ double delta_evaluate(Problem problem, Solution new_solution)
     int q = (new_solution).q;
     int r = (new_solution).r;
     cout << "Q: " << q << " R: " << r << endl;
-    double delta = problem.v[q] * (problem.p[r][q] - problem.p[q][q]) + problem.v[r] * (problem.p[q][r] - problem.p[r][r]);
+    double delta = problem.v[q] * (problem.p[q][q] - problem.p[r][q]) + problem.v[r] * (problem.p[r][r] - problem.p[q][r]);
 
     // valor de destrucción de q * (probabilidad de destrucción después del movimiento - probabilidad de destrucción antes del movimiento)
     // valor de destrucción de r * (probabilidad de destrucción después del movimiento - probabilidad de destrucción antes del movimiento)
@@ -277,7 +282,7 @@ int main(int argc, char *argv[])
     /*  INITIAL PARAMETERS */
     double T_initial = 1000;
     double k = 0.8; // usualmente entre 0.8 y 0.9999
-    int max_iterations = 2;
+    int max_iterations = 5;
     double T_min = 1e-10;
     double T_current = T_initial;
 
@@ -309,91 +314,57 @@ int main(int argc, char *argv[])
 
     /* ======================= */
     /* ALGORITHM */
-    /* MOVIMIENTO : swap de dos armas random */
 
     /* Generar vecindario */
     /* Escoger el mejor vecino respecto a la solución actual con la evaluación de sus deltas*/
     /* Consultar función de aceptación de la solución escogida */
     /* Cambiar temperatura */
 
-    /* ALGORITHM */
-    /* ======================= */
-
     double f_current = f(problem);
     cout << "FUNCION OBJETIVO : " << f_current << endl;
 
-    /* Condiciones de término de la busqueda */
-    // - Máximo de iteraciones
-    // - Temperatura tiende a cero o una temperatura minima
-    // - Tiempo máximo
+    // Iteracion
+    // movimiento -> dos numeros random de armas y swap
+    // calcular delta f = v_q (p_qq - p_rq) + v_r (p_rr - p_qr)
+    // aceptar o rechazar la s_new usando P( delta f)
+    // si s_new es aceptada entonces setea la solucion s_current y sigue a GOTO
+    // si s_new es rechazada entonces si f< f_best : f_best = f_new y s_best = s_new
 
-    for (int i = 0; (i < max_iterations) && (T_current > T_min); i++)
+    double delta = 0;
+    Solution new_solution = Solution(int_dimension);
+    /*
+    - si se llegan a las maximas iteraciones
+    - temperatura tiende a cero o una temperatura minima
+    - tiempo máximo
+    */
+    for (int i = 0; (i <= max_iterations) && (T_current >= T_min); i++)
     {
         cout << "Iteracion: " << i << " , T: " << T_current << endl;
+        // print_x_vector((*problem.solution).x);
+        cout << "Realizar movimiento" << endl;
+        new_solution = make_movement(problem.solution);
 
-        Solution best_solution = Solution(int_dimension);
-        int pivot = random(0, int_dimension - 1);
-        double best_delta = -INFINITY; // inifity o delta de la solucion actual?
         /* Generar vecindario */
-        for (int j = 0; j < 4; j++)
-        { 
-            if (j == pivot)
-                continue;
-            /* Seteo de delta y nueva solución */
-            double delta = 0.0;
-            Solution new_solution = Solution(int_dimension);
-
+        for (int j = 0; j < 5; j++)
+        {
             /* Generar vecino */
-            cout << "Generar vecino ..." << endl;
-            // int r = random(0, int_dimension - 1);
-            // int q = random(0, int_dimension - 1);
-
-            int q = j;
-            int r = pivot;
-
-            new_solution = make_movement(problem.solution, q, r);
-
-            cout << "_Nuevo vecino_" << endl;
-            print_x_vector(new_solution.x);
-
-            // cout << "_Solución actual_" << endl;
-            // print_x_vector((*problem.solution).x);
 
             /* Evaluar delta */
-            cout << "Evaluar delta ... " << endl;
-            delta = delta_evaluate(problem, new_solution);
-
-            cout << "Delta: " << delta << endl;
-
-            Problem pro = problem;
-            pro.solution = &new_solution;
-            double f_currents = f(pro);
-            cout << "FUNCION OBJETIVO VECINO: " << f_currents << endl;
-            cout << "FUNCION OBJETIVO : " << f_current << endl;
-
             /* Guardar el mejor delta */
-            if (best_delta <= delta)
-            {
-                cout << " BEST DELTA : " << best_delta << " ; DELTA : " << delta << endl;
-                best_delta = delta;
-                best_solution = new_solution;
-
-                cout << "_BEST_" << endl;
-                print_x_vector(best_solution.x);
-                cout << "_NEW_" << endl;
-                print_x_vector(new_solution.x);
-            }
         }
 
-        cout << "Tomar decision ..." << endl;
-        print_x_vector(best_solution.x);
+        /* Consultar función de aceptación de la solución escogida */
 
-        if (acceptance_function(best_delta, T_current))
-            accept_solution(&problem, &best_solution);
+        cout << "Calcular delta: " << endl;
+        delta = delta_evaluate(problem, new_solution);
+
+        cout << "Decision: " << endl;
+        if (acceptance_function(delta, T_current))
+            accept_solution(&problem, &new_solution);
         else
             reject_solution();
 
-        // print_x_vector((*problem.solution).x);
+        print_x_vector((*problem.solution).x);
         cout << "FUNCION OBJETIVO : " << f(problem) << endl;
         change_temperature(&T_current, k);
     }
