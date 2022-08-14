@@ -1,0 +1,40 @@
+\section{Definición del Problema}
+% Explicación del problema
+% En qué consiste
+% Cuales son su variables
+% Probablidades
+% Restricciones 
+% Funcion objetivo
+% Problemas relacionados.
+% variantes más conocidas
+
+El problema nacido a mediados del siglo XX, introducido por la necesidad de ventaja militar en la época, llamado Problema de Asignación  de Objetivos de Armas, más conocido como \textit{Weapon Target Assignment Problem} (WTA) es una clase de problemas de optimización combinatoria presentes en los campos de optimización e investigación de operaciones.
+El problema anterior nace como una variación del problema de asignación, conocido como \textit{Assignment Problem} (AP), problema fundamental de los denominados problemas de optimización combinatoria.
+
+% ¿Qué trabajos son parte de esta categoría? Para justificar estas aseveraciones es necesario incluir citas a trabajos específicos.
+%  \cite[pág 21]{Introduccion}
+%  \cite[pág 21]{Background}
+%  \cite[pág 21]{WithTechniques}
+
+Es bastante común encontrar en la literatura sobre el WTA que se centra en la perspectiva defensiva \cite{ahuja-2007}    \cite{Introduccion} \cite{WithTechniques}, encontrar la asignación óptima de armas a las amenazas de una manera que minimice el daño esperado, pero es inevitable que algunos consideren la perspectiva ofensiva \cite{Background}, encontrar una asignación óptima de un conjunto de armas de varios tipos a un conjunto de objetivos para maximizar el daño total esperado infligido al oponente.
+Para cuestiones de este acercamiento al problema consideraremos su perspectiva defensiva.
+
+El problema básico consiste en considerar una cantidad de tipos de armas y objetivos, a cada objetivo se le asigna un valor destructivo, disponemos también de la probabilidad de destrucción de los objetivos para la asignación de armas y objetivos, por otra parte, restringiendo el espacio de búsqueda debemos considerar que la cantidad de armas disponibles y la cantidad mínima de armas requeridas en cada objetivo condicionan la cantidad de armas asignadas a cada objetivo, esto para asegurarnos de que  el número total de armas utilizadas no exceda la cantidad de armas disponibles. 
+También debemos tener en cuenta que cada objetivo deba tener al menos 1 arma asignada y que no podemos asignar más de 1 arma por objetivo.
+
+
+% Esta es una de las restricciones que podemos encontrar. Existen más restricciones que podemos hallar según la formulación del problema, como que cada objetivo deba tener al menos 1 arma asignada, o que no podemos asignar más de 1 arma por objetivo, entre otras.
+
+Nuestro objetivo es minimizar el valor esperado de supervivencia, es decir, minimizar el valor de daño para cada objetivo teniendo en cuenta la probabilidad de que cierta arma no destruya cierto objetivo y su valor destructivo.
+
+Antes de explicar las diferentes variaciones de este problema debemos definir lo que es un escenario o etapa, esto es una iteración donde se realiza una evaluación de los daños, y en base a esta evaluación se reasignan las armas disponibles a los objetivos supervivientes de forma iterativa.
+
+En la literatura podemos encontrar diferentes variaciones de este problema, por ejemplo, la multi-objetivo, donde se puede asignar más de un arma a cada objetivo y no se requiere que todos los objetivos tengan armas asignadas. Además, tenemos las variaciones más comunes, el problema WTA estático y dinámico.
+En el caso estático, las armas se asignan a los objetivos una vez, por el contrario el caso dinámico implica agregar el tiempo como una dimensión adicional, los escenarios posteriores se verán relacionados directamente por el escenario anterior, así irá modificándose a medida que avanza el tiempo.
+
+Para este trabajo se considerará la variación más simple, el problema WTA estático y no se utilizará ningún proceso de defensa iterativo, es decir, se pasará un escenario inicial y se trabajará siempre con ese mismo, no cambiará con el transcurso de la búsqueda.
+% Esto corresponde a la variante dinámica del problema. La versión estática asigna armas a objetivos conocidos en un solo paso, sin iteraciones posteriores.
+
+%que existe cierta capacidad de cada arma para atacar múltiples objetivos al mismo tiempo, 
+% queremos encontrar la cantidad de armas de cada tipo asignadas a cierto objetivo, teniendo en cuenta la probabilidad de que cierta arma destruya cierto objetivo.
+% Función objetivo es minimizar el valor esperado de supervivencia, es decir, minimizar el valor de daño para cada objetivo

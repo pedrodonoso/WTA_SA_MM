@@ -1,0 +1,72 @@
+\section{Modelo Matem\'atico}
+% Uno o m\'as modelos matem\'aticos para el problema, idealmente indicando el espacio de b\'usqueda para cada uno. Cada modelo debe estar correctamente referenciado, adem\'as no debe ser una imagen extraida. Tambi\'en deben explicarse en detalle cada una de las partes, mostrando claramente la funci\'on a maximizar/minimizar, variables y restricciones. Tanto las f\'ormulas como las explicaciones deben ser consistentes.
+
+% ¿De dónde se obtuvo el modelo?
+
+Para expresar matemáticamente esta variación estática del problema WTA, de ahora en adelante denotada como SWTA, extraída del paper guía llamado  \href{https://web.karabuk.edu.tr/emrullahsonuc/wta/A_Parallel_Simulated_Annealing_Algorithm_for_Weapon-Target_Assignment_Problem.pdf}{A Parallel Simulated Annealing Algorithm for Weapon-Target Assignment Problem}
+  debemos definir primero que $i = 1, \dots , n$ corresponde a cada objetivo con $n$ la cantidad total de objetivos y $j = 1, \dots , m$ para cada objetivo con $m$ la cantidad total de tipos de armas.
+
+
+\subsubsection{Parámetros}
+Definiremos las siguientes variables.
+
+\begin{align*}
+    m :& \text{ número de objetivos a destruir.} \\
+    n :& \text{ número de tipos de armas. Con un arma por cada tipo.} \\
+    p_{ij}:& \text{ la probabilidad de que el arma} \; j \; \text{destruya el objetivo} \; i. \\
+    % q_{ij}:& \text{la probabilidad de que el arma i no destruya el objetivo j} \\
+    V_j :& \text{ el valor de destructivo del objetivo} \; j \\
+    % K :& \text{el n\'umero de activos protegidos} \\
+    % a_k :& \text{el valor del activo k} \\
+    % n :& \text{ el número de objetivos} \\
+    % m :& \text{ el número de tipos de armas} \\
+    % \mathcal{W}_i :& \text{ el número de armas del tipo i} \\
+    % c_{ij} :& \text{un par\'ametro de costo para asignar un arma del tipo i al objetivo j} \\
+    % \mathcal{F} :& \text{el conjunto de asignaciones factibles} \\
+    % \gamma_{jk} :& \text{la probabilidad de que el objetivo j destruya el activo k} \\
+    % \mathcal{S}_j :& \text{el n\'umero m\'aximo de armas que pueden ser asignadas al objetivo j} \\
+\end{align*}
+
+\subsubsection{Variable}
+La variable \ref{ec:variable_x} definida nos ayudará a representar nuestro escenario, para cuestiones matemáticas se representará como una variable binaria para mostrarnos a qué objetivo se le asigna el arma $i$.
+Para cuestiones de representación en el algoritmo, será un arreglo que contenga el identificador del arma del tipo $j$ asignada al objetivo $i$, y cada casilla corresponderá a un objetivo distinto, esto nos permitirá tratar con la restricción mediante la representación. 
+
+\begin{align}
+    \mathcal{X}_{ij} :&  
+    \left\lbrace 
+    \begin{array}{l} 
+    \text{Si el arma} \; j \; \text{es asignado a el objetivo} \; i \\ 
+    0 \; \text{otro caso} 
+    \end{array}
+    \right.
+    \label{ec:variable_x}
+\end{align}
+
+\subsubsection{Formulación SWTA}
+Un defensor tiene $w_i = 1, ... , m$ tipos de armas con las que defenderse contra $j=1, ... , n$ objetivos.
+Cada arma del tipo i tiene una probabilidad $p_{ij}$ de matar al objetivo $j$ y cada objetivo $j$ tienen un valor destructivo $V_j$.
+Con las variables de decisi\'on $\mathcal{X}_{ij}$ indicando el n\'umero de armas de tipo $i$ para asignar al objetivo $j$, se formula el \textit{SWTA} de la siguiente manera. \cite[pág 2]{Background}
+
+% No hay explicación de las restricciones ni de la función objetivo
+
+\subsection{Función Objetivo}
+
+Los pesos definidos los interpretamos según el autor del paper antes mencionado, como el valor destructivo, entonces buscaremos minimizar la suma ponderada de los pesos $\mathcal{V_i}$, es decir, minimizar los daños que recibiría el recurso que deseamos proteger.
+
+
+\begin{align*}
+    \textrm{min} & \sum^{n}_{j=1} \mathcal{V}_j \prod^{m}_{i=1}{(1 - p_{ij})^{\mathcal{X}_{ij}} }
+\end{align*}
+
+\subsection{Restricciones}
+
+En la ecuación \ref{res:1} está representada la restricción relacionada con que cada objetivo debe tener asignada un arma y un arma debe estar relacionada con un objetivo. 
+
+\begin{align}
+    \label{res:1}
+    \textrm{s.t.} & \, \sum^{n}_{j=1}{\mathcal{X}_{ij} } = 1 \,, \quad \textrm{for} \: i = 1, \dots, m \\
+    \nonumber
+    & \mathcal{X}_{ij} \in \mathds{Z}_{+} \,, \quad \textrm{for} \: i=1, \dots, m, \: j=1, \dots, n 
+\end{align}
+
+Más adelante nos daremos cuenta que esta restricción está tratada implícitamente por la representación.

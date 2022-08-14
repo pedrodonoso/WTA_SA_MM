@@ -1,0 +1,65 @@
+\section{Descripción del algoritmo}
+
+El algoritmo que se analizará es una implementación del algoritmo \textit{Simulated Annealing} en combinación con la heurística \textit{Best Improvement} o \textit{Mejor mejora}, esto se implementará como una especie de \textit{Hill Climbing}, dado que se generará un vecindario y de dicho vecindario se escogerá el mejor.
+
+Luego de que se escoja el mejor se aplicará la lógica de \textit{SA}, entonces allí se decidirá con la temperatura y probabilidades si se acepta o no la solución.
+
+Se seguirá de esta forma hasta que se logre la cantidad máxima de iteraciones o hasta que se llegue a una temperatura mínima.
+
+Se debe tener en cuenta que $delta$ es el delta de la mejor solución escogida, $new\_solution$ es la solución a la que corresponder ese mejor $delta$ escogido y $k$ es coeficiente de decaimiento de la temperatura.
+
+\begin{algorithm}[H]
+\caption{\textit{Simulated Annealing} con \textit{Best Improvement}}
+\label{alg:Framwork}  
+  \begin{algorithmic}
+    \Require WTA5.txt
+    \Ensure Mejor solución
+    \State -----------------------------------------------------
+    \State Definir variables extraídas de parsear el archivo de texto, dimensión, probabilidades de destrucción y pesos.
+    \State Definir temperatura inicial, temperatura mínima, su decaimiento y el máximo de iteraciones.
+    \State Generar solución inicial
+    \State Instanciar mejor solución y solución actual.
+    \While {($numero\_iteraciones < maximo\_iteraciones$) and ($T\_current > T\_min$)}
+    % \State Otorgar a cada solución una puntuación
+    \State Generar movimientos de los índices de los vecinos
+    \State Calcular los deltas de la solución actual y las soluciones con el movimiento.
+    \State Escoger la solución que tenga mejor delta.
+    \If{acceptance\_function( $delta$, $T\_current$)}
+    \State accept\_solution( $problem$ , $new\_solution$ )
+    \Else
+    \State reject\_solution()
+    \EndIf
+    \State change\_temperature($T\_current$, $k$)
+    \State $numero\_iteraciones + 1$
+    \EndWhile
+    \State Imprimir mejor solución y su calidad
+  \end{algorithmic}
+\end{algorithm}
+
+Comenzamos definiendo nuestros parámetros iniciales y constantes a utilizar en el algoritmo, el vector de probabilidades de destrucción y el vector que representa los valores destructivos delos objetivos extraídos de la instancia definida al ejecutar el algoritmo, en esta primera parte también definimos las temperaturas inicial y final, el coeficiente de decaimiento de la temperatura y el máximo de iteraciones.
+
+Iniciando con el algoritmo, generamos una solución inicial definida como la correspondencia secuencial de cada arma a su respectivo objetivo, es decir, el arma 2 asignada al objetivo 2, y así sucesivamente, en un vector en dos dimensiones correspondería a la matriz diagonal.
+Luego le sigue el bucle que ayudará a realizar la búsqueda, con dos sentencias de control de flujo, una que controla la cantidad de iteraciones y otra que controla que se esté trabajando dentro de los rangos acordados de temperatura.
+
+En la búsqueda se genera el vecindario aplicándole un movimiento diferente a la solución actual, se calculan los deltas de cada vecino, se escoge la solución con el mejor delta y con este delta se realiza el proceso de aceptación de la solución escogida. Si se acepta la solución, es guardada como la mejor hasta el momento y si se rechaza, se sigue con la misma mejor solución con la que se inició la iteración de búsqueda, para finalizar la iteración se cambia la temperatura multiplicando la temperatura actual por el coeficiente de decaimiento.
+
+Con respecto a la búsqueda el movimiento que se le realiza a cada vecino se realiza en base a un objetivo pivot escogido aleatoriamente, esto ayuda a realizar los movimientos swap a todos los vecinos, por ejemplo, en una instancia de 5 dimensiones, se escoge un pivot 2, y se cambia cada objetivo por el del pivot, generando 4 vecinos \ref{fig:gen_vecindario}.
+
+
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{llllll}
+\hline
+\multicolumn{1}{|l|}{Solución Inicial} & \multicolumn{1}{l|}{0} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{\cellcolor[HTML]{9AFF99}2} & \multicolumn{1}{l|}{3} & \multicolumn{1}{l|}{4} \\ \hline
+ &  &  &  &  &  \\ \hline
+\multicolumn{1}{|l|}{Vecino 0} & \multicolumn{1}{l|}{\cellcolor[HTML]{9AFF99}2} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{\cellcolor[HTML]{FFCCC9}0} & \multicolumn{1}{l|}{3} & \multicolumn{1}{l|}{4} \\ \hline
+\multicolumn{1}{|l|}{Vecino 1} & \multicolumn{1}{l|}{0} & \multicolumn{1}{l|}{\cellcolor[HTML]{9AFF99}2} & \multicolumn{1}{l|}{\cellcolor[HTML]{FFCCC9}1} & \multicolumn{1}{l|}{3} & \multicolumn{1}{l|}{4} \\ \hline
+\multicolumn{1}{|l|}{Vecino 2} & \multicolumn{1}{l|}{0} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{\cellcolor[HTML]{FFCCC9}3} & \multicolumn{1}{l|}{\cellcolor[HTML]{9AFF99}2} & \multicolumn{1}{l|}{4} \\ \hline
+\multicolumn{1}{|l|}{Vecino 3} & \multicolumn{1}{l|}{0} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{\cellcolor[HTML]{FFCCC9}4} & \multicolumn{1}{l|}{3} & \multicolumn{1}{l|}{\cellcolor[HTML]{9AFF99}2} \\ \hline
+\end{tabular}
+\caption{Vecindario generado en base a la solución inicial de ejemplo}
+\label{fig:gen_vecindario}
+\end{table}
+
+

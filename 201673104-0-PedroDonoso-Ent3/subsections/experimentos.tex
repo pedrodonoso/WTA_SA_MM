@@ -1,0 +1,117 @@
+\section{Experimentos}
+
+Antes de comenzar cualquier proceso de experimentación se deben explicitar los óptimos locales propuestos por la literatura de referencia \cite{sonuc-2017}.
+
+\begin{table}[!ht]
+\centering
+\begin{tabular}{|l|l|llll}
+\cline{1-2}
+\textbf{Instancia} & \textbf{Mejor SA} &  &  &  &  \\ \cline{1-2}
+5 & 48.3640 &  &  &  &  \\ \cline{1-2}
+10 & 96.3123 &  &  &  &  \\ \cline{1-2}
+20 & 142.1070 &  &  &  &  \\ \cline{1-2}
+30 & 248.0285 &  &  &  &  \\ \cline{1-2}
+40 & 305.5016 &  &  &  &  \\ \cline{1-2}
+50 & 353.0767 &  &  &  &  \\ \cline{1-2}
+60 & 415.0528 &  &  &  &  \\ \cline{1-2}
+70 & 498.1049 &  &  &  &  \\ \cline{1-2}
+80 & 534.4408 &  &  &  &  \\ \cline{1-2}
+90 & 594.0639 &  &  &  &  \\ \cline{1-2}
+100 & 699.8357 &  &  &  &  \\ \cline{1-2}
+200 & 1306.9126 &  &  &  &  \\ \cline{1-2}
+\end{tabular}
+\caption{Mejores óptimos locales de literatura de referencia.}
+\label{tab:optimos_ref}
+\end{table}
+
+Durante todos los experimentos realizados se utiliza esta información para comparar implementaciones de algoritmos.
+
+\subsection{Metodología}
+
+Para poner a prueba este algoritmo y encontrar el mejor óptimo local se realizaron diferentes experimentos de sintonización de parámetros, acordando al menos 5 iteraciones de ejecución del algoritmo como una cantidad razonable para evidenciar el alcance de las pruebas con temperatura y al menos 10 iteraciones para las pruebas con movimientos, lo anterior para lograr realizar los experimentos en menos de una hora, tiempos totales que se documentaron en los archivos excel adjuntos en la carpeta \textit{stadistics} los parámetros a sintonizar en estos experimentos son los siguientes:
+
+\begin{itemize}
+    \item Movimiento.
+    \item Temperatura y coeficiente de decaimiento.
+\end{itemize}
+
+Cabe destacar que para realizar de forma más óptima este proceso de sintonización se modificó el algoritmo para que se pasasen los parámetros por argumentos. Además para realizar el cambio de parámetros se compiló el código y se llamó a la función \textit{run} del Makefile que nos permite entregarle los parámetros con nombre al algoritmo, esto simplemente se hace con fines demostrativos, simplemente se podría pasar los parámetros directamente al ejecutable resultante de la compilación.
+
+\subsection{Entorno de experimentación}
+
+\begin{itemize}
+    \item Para realizar las pruebas se utilizó un Windows Subsystem for Linux (WSL) con un sistema operativo virtual Ubuntu 20.04.3 LTS de 9 GB de Ram.
+    \item El WSL se instaló en un sistema operativo Windows 10 Pro 64-bits.
+    \item Se utilizó un procesador de 4 núcleos  2.5 GHz y 12 GB de Ram.
+    \item Para ejecutar el programa se utilizó el compilador gcc version 9.4.0.
+\end{itemize}
+
+\subsection{Parámetros del algoritmo}
+
+Primero explicitaremos los parámetros del algoritmo, estos mismos parámetros serán expuestos en la salida del programa y guardados en un archivo de texto para tener un historial de las ejecuciones.
+
+\subsubsection{Descripción de los parámetros}
+
+\begin{itemize}
+    \item \textbf{INS}, dimensión de la instancia, cantidad de objetivos y armas de la instancia.
+    \item \textbf{T\_INIT}, temperatura inicial, el valor predeterminado es 1000.
+    \item \textbf{T\_FINISH}, temperatura final, el valor predeterminado es 1e-50
+    \item \textbf{K}, coeficiente de decrecimiento de la temperatura.
+    \item \textbf{MAX\_ITER}, cantidad máxima de iteraciones de la búsqueda.
+    \item \textbf{F}, valor de la función objetivo del óptimo local.
+    \item \textbf{MOVE}, número identificador del movimiento.
+    \item \textbf{TIME}, tiempo en segundos que dura la ejecución del algoritmo.
+\end{itemize}
+
+
+\subsection{Experimento 1: Temperatura y coeficiente de decaimiento}
+El objetivo de este experimento es determinar la injerencia de la temperatura y su coeficiente de decaimiento en la cantidad de iteraciones en la búsqueda del algoritmo, se utilizó la cantidad de 5 intentos para cada prueba para lograr un tiempo de ejecución de 1.6 Horas.
+
+\subsubsection{Procedimiento}
+Se realizará una prueba donde se iterará el coeficiente $k$ entre $0.90$ y $0.99$ a intervalos de centésimas por cada instancia para determinar si la precisión en el $k$ es determinante en la búsqueda más óptima.
+En esta prueba se utilizó el movimiento 1 que por el experimento siguiente se sabe tiene mejores resultados a la hora de converger en el óptimo local entregado por la literatura \cite{sonuc-2017}. Además se fijó un máximo de iteraciones como $100000$ para evitar la parada por cantidad de iteraciones y así permitir que el algoritmo se detenga por la condición de temperatura.
+
+Para lo anterior se utilizó un script \ref{test_script_t} en bash que itera entre los coeficientes, $0.90$ y $0.99$ a intervalos de centésimas por cada instancia y las repite 5 veces.
+
+\lstinputlisting[style=myBash, label={test_script_t}, caption={Script para realizar sintonización de parámetro coeficiente de decrecimiento.}]{scripts/test_temperature.sh}
+
+\subsubsection{Comparación estado del arte}
+
+Se escogió el intervalo a iterar en el parámetro de coeficiente de decrecimiento tomando en consideración la literatura de referencia \cite{sonuc-2017} que utiliza un k=$0.9999$, como este número es muy cercano a 1 no nos permite converger a la temperatura predeterminada 0.1 en pocas iteraciones para luego realizar otros tipos de pruebas, es más, para la instancia de dimensión $200$ el algoritmo converge a la temperatura mínima en  $200000$, algo que podría dificultar las pruebas con instancias de dimensiones altas. 
+
+\subsubsection{Criterios de término}
+El criterio de término es simplemente llegar a la temperatura mínima $0.1$, por lo mismo se fija un máximo de iteraciones de $100000$, un número inalcanzable para las instancias y los coeficientes de decrecimiento presentados.
+
+\subsection{Experimento 2: Movimiento}
+En esta segunda prueba se busca encontrar el mejor movimiento que nos lleve a un óptimo local cercano al entregado por la literatura de referencia \cite{sonuc-2017} independiente del número de iteraciones o el tiempo. Para ello se buscaron 3 movimientos razonables para comparar.
+Se utilizó la cantidad de 10 intentos para cada prueba para lograr un tiempo de ejecución de 1.7 Horas.
+
+\subsection{Movimientos}
+Los tres movimientos swap distintos para generar el vecindario son los siguientes.
+
+\begin{itemize}
+    \item Movimiento 0: Movimiento swap completamente aleatorio entre dos objetivos $q$ y $r$, este movimiento es el mismo propuesto en la literatura de referencia \cite{sonuc-2017}, como en esta implementación del algoritmo SA se genera un vecindario, probablemente este movimiento no es el más óptimo debido a que su aleatoriedad permite repetir movimientos en el vecindario.
+    
+    \item Movimiento 1: Movimiento swap semi-aleatorio entre un objetivo aleatorio pivot o fijo y otro iterativo $j$, siendo $j$ el objetivo que itera todo el escenario, este movimiento se creó pensando en la mantención de parte de la solución principal desde la que se genera el vecindario, así se fija un objetivo-arma para cada vecindario generado y en cada movimiento realizado en el vecindario, se intercambia por cada uno de los objetivos-arma del escenario.
+    
+    \item Movimiento 2: Movimiento swap completamente iterativo entre un objetivo $j$ y otro $j+1$, este movimiento simplemente cambia los objetivos-armas con su objetivo-arma vecino que no tiene mucha relevancia en este problema por su independencia respecto a su posición.
+\end{itemize}
+
+\subsubsection{Procedimiento}
+
+En esta prueba se iteró el movimiento con cada instancia al menos 10 veces, es decir, primero se fijó el movimiento cero que se ejecutó 10 veces para cada instancia, así mismo para el movimiento uno y finalmente el movimiento dos.
+
+Para ello se creó un pequeño script en bash que realiza esta tarea automáticamente.
+
+Los parámetros que no se iteraron como el número de instancias y el movimiento, se dejaron predeterminados como muestra el script \ref{test_script_m}, la temperatura inicial en $1000$, la temperatura final en $0.1$, el coeficiente de decaimiento en $0.98$ y el máximo de iteraciones en $100000$.
+
+\lstinputlisting[style=myBash, label={test_script_m}, caption={Script para realizar sintonización de parámetro movimiento.}]{scripts/test_movements.sh}
+
+
+\subsubsection{Comparación estado del arte}
+
+En la literatura de referencia \cite{sonuc-2017} se explicitan los valores de los parámetros utilizados para realizar las pruebas, k = $0.9999$, T\_INIT=$1000$, T\_FINISH=$0.1$, durante las diferentes pruebas, se notó que utilizar un coeficiente de decrecimiento tan cercano a 1 no afectaba mayormente en la disminución de la temperatura y esto podía llevar al algoritmo a ejecutarse en una cantidad de iteraciones en el orden de los $200.000$, entonces se acordó utilizar un coeficiente $k=0.98$ que nos permite llegar a la temperatura final en $179$ iteraciones \ref{graph:f_i_por_k_instance_5}. Todo lo anterior se puede evidenciar en las pruebas realizadas para sintonizar los parámetros de temperatura y coeficiente de decrecimiento. Si bien esto se pudo evitar definiendo una cantidad lo suficientemente baja en el parámetro MAX\_ITER, en este experimento se pretende pasar por todo el intervalo de la temperatura definida para así aprovechar al máximo el algoritmo de \textit{Simulated Annealing}.
+
+\subsubsection{Criterios de término}
+
+Como se definió anteriormente, el criterio de término utilizado fué solamente alcanzar la temperatura final para aprovechar al cien por ciento el algoritmo SA.

@@ -1,0 +1,88 @@
+\documentclass[letter, 10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+% \usepackage[dvips]{graphicx}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage[top=3cm,bottom=3cm,left=3.5cm,right=3.5cm,footskip=1.5cm,headheight=1.5cm,headsep=.5cm,textheight=3cm]{geometry}
+\usepackage{multirow}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\usepackage{listings}
+
+\lstdefinestyle{myBash}{
+basicstyle=\small,
+language=bash,
+captionpos=b, 
+label=lst:4, 
+frame=LRTB,
+breaklines=true,
+showtabs=true, 
+% escapechar=@
+}
+
+\usepackage[table,xcdraw]{xcolor}
+
+\usepackage{todonotes}
+
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+
+
+\begin{document}
+\title{Inteligencia Artificial \\ \begin{Large}Estado del Arte: \textbf{Weapon target assignment problem}\end{Large}}
+\author{Pedro Donoso Aguilera}
+\date{\today}
+\maketitle
+
+
+%--------------------No borrar esta secci\'on--------------------------------%
+\section*{Evaluaci\'on}
+
+\begin{tabular}{ll}
+Resumen (5\%): & \underline{\hspace{2cm}} \\
+Introducci\'on (5\%):  & \underline{\hspace{2cm}} \\
+Definici\'on del Problema (10\%):  & \underline{\hspace{2cm}} \\
+Estado del Arte (35\%):  & \underline{\hspace{2cm}} \\
+Modelo Matem\'atico (20\%): &  \underline{\hspace{2cm}}\\
+Conclusiones (20\%): &  \underline{\hspace{2cm}}\\
+Bibliograf\'ia (5\%): & \underline{\hspace{2cm}}\\
+ &  \\
+\textbf{Nota Final (100\%)}:   & \underline{\hspace{2cm}}
+\end{tabular}
+%---------------------------------------------------------------------------%
+\vspace{2cm}
+
+\begin{abstract}
+En este informe se expondrá un problema relacionado a la estrategia militar, más específicamente la asignación de armas a objetivos de guerra. Este problema conocido como \textit{Weapon Target Assignament Problem} (WTA) tiene diversas formas de obtener una solución, una técnica incompleta bastante eficiente \cite{andersen-2022} es \textit{Branch and Bound} utilizando relajación y también se han encontrado técnicas incompletas que encuentren óptimos locales que se trabajarán más adelante.
+Lo que se busca es que el lector comprenda la formulación de la problemática y la implementación de una de las técnicas incompletas utilizando heurísticas para mejorar la búsqueda del óptimo local
+ con la finalidad de entender que no existe un solo método para solventar un problema, sino que es posible combinar o crear heurísticas para encontrar óptimos locales que nos entreguen soluciones de calidad.
+\end{abstract}
+
+\input{subsections/introduccion}
+
+\input{subsections/definicion_problema}
+
+\input{subsections/estado_del_arte}
+
+\input{subsections/modelo_matematico}
+
+\input{subsections/representacion}
+
+\input{subsections/descripcion_algoritmo}
+
+\input{subsections/experimentos}
+
+\input{subsections/resultados}
+
+\input{subsections/conclusion}
+
+% \section{Bibliograf\'ia}
+% Indicando toda la informaci\'on necesaria de acuerdo al tipo de documento revisado. Todas las referencias deben ser citadas en el documento.
+\bibliographystyle{plain}
+\bibliography{Referencias}
+
+\end{document} 

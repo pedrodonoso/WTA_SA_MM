@@ -1,0 +1,21 @@
+\section{Conclusiones}
+
+%  \cite[pág 21]{Introduccion}
+%  \cite[pág 21]{Background}
+%  \cite[pág 21]{WithTechniques}
+
+% todas las técnicas resuelven el mismo problema o hay algunas diferencias?
+% en qué se parecen o difieren las técnicas en el contexto del problema?
+% qué limitaciones tienen?
+% qué tecnicas o estrategias son las más prometedoras?
+% existe trabajo futuro por realizar?
+% qué ideas usted propone como lineamientos para continuar con investigaciones futuras?
+
+% Las conclusiones se derivan del trabajo anterior y no hay suficiente desarrollo que avale lo expresado en esta sección.
+
+Luego de realizar las experimentaciones expuestas se logró determinar que para este algoritmo de búsqueda local que combina la técnica \textit{Simulated Annealing} con \textit{Mejor mejora}, existe dependencia entre el coeficiente de decrecimiento y la cantidad de iteraciones de la búsqueda, además se logró determinar la injerencia de la precisión del coeficiente de decrecimiento, habiendo acordado el coeficiente $0.98$ como el más óptimo para realizar pruebas o ejecuciones de escenarios de dimensión alta para el entorno de experimentación presentado en el informe.
+
+Además se logró determinar que los movimiento 0 y 1, que presentan cierto grado de aleatoriedad, funcionan de forma óptima para las instancias propuestas por la literatura de referencia \cite{sonuc-2017}.
+Por último se destaca la imposibilidad de lograr llegar al óptimo local de referencia, no se pudo determinar si este problema es por la modificación que se hizo al algoritmo, agregándole la heurística \textit{Mejor Mejora} o algún error en la implementación tanto del algoritmo como la calibración de los parámetros.
+
+Queda propuesto experimentar con instancias de dimensión mayor a 200 para lograr determinar si el \textit{movimiento 0}, totalmente aleatorio, es realmente un buen movimiento para instancias de dimensiones mayores a las expuestas.

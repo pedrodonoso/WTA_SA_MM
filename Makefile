@@ -7,27 +7,20 @@ CFLAGS  = -Wall -Werror
 CTFLAGS = -D_POSIX_THREAD_SEMANTICS 
 STFLAGS = -lpthread
 RM = rm
-# the build target executable:
-# NOTHREADS = multiply
 MAIN = main
-# STHREAD = sthread
+INS=5
+K=0.9
+T_INIT=1000 
+T_FINISH=1e-50
+MAX_ITER=1000
+MOVE=1
 
-# all: $(STHREAD) $(NOTHREADS) $(THREADS)
-all: $(MAIN)
+all: compile run
 
-# $(STHREAD): $(STHREAD).c
-# 	$(CC) $(CFLAGS) $(CTFLAGS) -c $(MAIN).cpp -o $(MAIN).o $(STFLAGS)
-# 	$(CC) $(CFLAGS) $(CTFLAGS) -c $(STHREAD).c -o $(STHREAD).o $(STFLAGS)
-# 	$(CC) $(MAIN).o $(STHREAD).o -o $(MAIN) $(STFLAGS)
-
-$(MAIN): $(MAIN).cpp
+compile: $(MAIN).cpp
 	$(CC) $(CFLAGS) $(MAIN).cpp -o $(MAIN)
-
-# $(MAIN): $(MAIN).cpp
-# 	$(CC) $(CFLAGS) $(TFLAGS) $(MAIN).cpp sthread.c -o $(MAIN) 
+run:
+	./$(MAIN) $(INS) $(K) $(T_INIT) $(T_FINISH) $(MAX_ITER) $(MOVE)
+ 
 clean:
-	rm main
-help:
-	@echo 'sudo make TARGET=nombre_archivo'
-
-# sudo make TARGET=C1
+	rm $(MAIN)

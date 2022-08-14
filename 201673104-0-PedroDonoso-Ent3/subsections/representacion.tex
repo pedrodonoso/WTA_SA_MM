@@ -1,0 +1,57 @@
+\section{Representación}
+
+Como entrada al algoritmo se tiene un archivo de texto que contiene en su primera linea la cantidad de objetivos y armas, que se le denominará dimensión de la instancia, para este caso de estudio será la misma cantidad de armas que de objetivos, en sus lineas siguientes especifica los valores de destrucción de cada objetivo y en las restantes, las probabilidades de que el arma de tipo $i$ destruya al objetivo $j$.
+
+Como estructura de datos para representar la solución, se dispondrá de un arreglo del mismo largo que la cantidad de armas y objetivos, en cada índice se representará los objetivos y los valores de cada casilla representará el arma que se le asignó a cada objetivo, la justificación de ello tiene relación con la sección anterior.
+
+Como se mencionó en la sección anterior, la restricción \ref{res:1} que acota la cantidad de armas asignadas a una por cada objetivo y viceversa, está tratada implícitamente en esta representación vectorial.
+
+En el modelo matemático se representa $X_{ij}$ como una matriz bidimensional que indica la cantidad de cada arma relacionada con cada objetivo.
+
+    \begin{table}[h!]
+    \centering
+    \begin{tabular}{ll|lll|}
+    \cline{3-5}
+     &  & \multicolumn{3}{l|}{Armas} \\ \cline{3-5} 
+     &  & \multicolumn{1}{l|}{\textbf{0}} & \multicolumn{1}{l|}{\textbf{1}} & \textbf{2} \\ \hline
+    \multicolumn{1}{|l|}{\multirow{3}{*}{Objetivos}} & \textbf{0} & 2 & 0 & 1 \\ \cline{2-2}
+    \multicolumn{1}{|l|}{} & \textbf{1} & 1 & 3 & 0 \\ \cline{2-2}
+    \multicolumn{1}{|l|}{} & \textbf{2} & 8 & 3 & 1 \\ \hline
+    \end{tabular}
+    \caption{Representación matricial de la solución.}
+    \label{fig:rep_sol_matrix}
+    \end{table}
+    
+Como se puede ver en la representación anterior \ref{fig:rep_sol_matrix}, los índices de las columnas, marcadas en negrita, representa cada tipo de arma con índices 0,1 y 2, y en las filas se representan los objetivos con índices 0,1 y 2, entonces podemos decir que al objetivo 0, se le asignan 2 armas del tipo 0, 0 armas del tipo 1 y 1 arma del tipo 2.
+
+Esto ayuda a estandarizar una representación para los problemas del tipo WTA que permite tener más de un arma asignada a un objetivo, pero esto solo se representa así en este documento para la comprensión del lector, cuando se acota el dominio de los valores que se le asignan en cada casilla de la matriz  $X_{ij}$ al dominio de este caso particular de problema SWTA con un arma asignada para cada objetivo \ref{fig:rep_sol_matrix_bin}, entonces se puede generar una matriz diagonal que se aproxime más a lo que se necesita.
+
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{ll|lll|}
+    \cline{3-5}
+     &  & \multicolumn{3}{l|}{Armas} \\ \cline{3-5} 
+     &  & \multicolumn{1}{l|}{\textbf{0}} & \multicolumn{1}{l|}{\textbf{1}} & \textbf{2} \\ \hline
+    \multicolumn{1}{|l|}{\multirow{3}{*}{Objetivos}} & \textbf{0} & 1 & 0 & 0 \\ \cline{2-2}
+    \multicolumn{1}{|l|}{} & \textbf{1} & 0 & 1 & 0 \\ \cline{2-2}
+    \multicolumn{1}{|l|}{} & \textbf{2} & 0 & 0 & 1 \\ \hline
+    \end{tabular}
+    \caption{Representación matricial de la solución.}
+    \label{fig:rep_sol_matrix_bin}
+\end{table}
+
+Con esto se puede evidenciar que no es necesario tener una matriz que representa una posible solución porque las casillas que representan los ceros están demás, consumen memoria y puede llegar a ser difícil de manejar, es por lo anterior que se modificó la representación de la posible solución a una representación vectorial.
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{lllll}
+\textbf{0}              & \textbf{1}             & \textbf{2}             &           &           \\ \cline{1-3}
+\multicolumn{1}{|l|}{2} & \multicolumn{1}{l|}{0} & \multicolumn{1}{l|}{1} & \textbf{} & \textbf{} \\ \cline{1-3}      
+\end{tabular}
+
+\caption{Representación vectorial de la solución.}
+\label{fig:rep_sol_vector}
+\end{table}
+
+Entonces la nueva representación consiste en mostrar en cada casilla el tipo de arma que se le asigna a cada objetivo y los índices de dicho vector representan a los objetivos, de esta manera se utiliza mucho menos espacio en memoria y se puede manejar implícitamente la restricción \ref{res:1}, haciendo un movimiento de intercambio de posiciones (switch) por ejemplo.
